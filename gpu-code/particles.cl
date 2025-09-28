@@ -1,14 +1,26 @@
 // gpu-code/particles.cl
 
-__kernel void update_particles(__global float4* particles,
-                               __global float* species,
-                               int width, int height,
-                               float dt, int N) {
-	int i = get_global_id(0);
+__constant float attraction[5][5] = { // Effect table courtesy of Claude
+ // | Red   | Yel    | Blu    | Grn  | Part |
+    {2.5f,   -2.5f,  2.789f,  0.3f,  0.1f   },   // Red attractions
+    {2.15f,  1.2f,   1.89f,   0.15f, 1.05f  }, // Yellow attractions  
+    {2.2f,   1.76f,  3.0f,    -0.3f, 2.4f   },   // Blue attractions
+    {3.05f,  -0.25f, 1.05f,   1.98f, -0.76f }, // Green attractions
+    {0.01f,  3.6f,   1.0f,    -1.6f, 1.7f   }   // Abiotic particle attractions
+};
 
+__constant float margin = 3.0f;
+
+void computeParticle(__global float4* particles,
+								__global int* species,
+								int i, float effectDist,
+								int width, int height,
+								float dt, int N) {
 	float4 p = particles[i];
 	float fx = 0.0f;
 	float fy = 0.0f;
+
+	int selfSpecies = species[i];
 
 	for (int j = 0; j < N; j++) {
 		if (i == j) continue;
@@ -16,80 +28,58 @@ __kernel void update_particles(__global float4* particles,
 		float4 other = particles[j];
 		float dx = other.x - p.x;
 		float dy = other.y - p.y;
-		float dist = sqrt(dx*dx + dy*dy) + 1e-5f;
-		if (dist > 64) continue;
+		if (fabs(dx) > effectDist || fabs(dy) > effectDist) continue;
+		float dist = sqrt(dx*dx + dy*dy + 1e-5f);
 
-		float selfSpecies = species[i];
-		float otherSpecies = species[j];
+		int otherSpecies = species[j];
 
-		switch ((int)selfSpecies) {
-			case 0: // Red particle (cytoplasm/mover)
-				if (otherSpecies == 0) { 
-					fx += (dx / dist) * 2.5f; // strong attraction to red
-					fy += (dy / dist) * 2.5f;
-				} else {
-					fx += (dx / dist) * 0.2f; // weak attraction to others
-					fy += (dy / dist) * 0.2f;
-				}
-				break;
+		float force = attraction[selfSpecies][otherSpecies];
+		fx += (dx / dist) * force;
+		fy += (dy / dist) * force;
 
-			case 1: // Yellow particle (cytoplasm/mover)
-				if (otherSpecies == 1) {
-					fx += (dx / dist) * 2.2f; // strong cohesion
-					fy += (dy / dist) * 2.2f;
-				} else {
-					fx += (dx / dist) * 0.15f;
-					fy += (dy / dist) * 0.15f;
-				}
-				break;
+		// Distance optimization with help from Claude
+		float repulsion = 0.0f;
+		if (dist < 2.8f && otherSpecies != selfSpecies) repulsion = 6.5f;
+		else if (dist < 7.0f) repulsion = 2.5f;
 
-			case 2: // Blue particle (cell wall)
-				if (otherSpecies == 2) {
-					fx += (dx / dist) * 3.0f; // very cohesive wall
-					fy += (dy / dist) * 3.0f;
-				} else {
-					fx += (dx / dist) * 0.1f; // minimal attraction to others
-					fy += (dy / dist) * 0.1f;
-				}
-				break;
-
-			case 3: // Green particle (nucleus)
-				if (otherSpecies == 3) {
-					fx += (dx / dist) * 1.5f; // nucleus cohesion
-					fy += (dy / dist) * 1.5f;
-				} else {
-					fx += (dx / dist) * 0.05f; // very weak interaction
-					fy += (dy / dist) * 0.05f;
-				}
-				break;
-
-			default: break;
-		}
-
-		if (dist < 2.0f) { // strong short-range repulsion for all
-			fx -= (dx / dist) * 1.0f;
-			fy -= (dy / dist) * 1.0f;
-		}
-
-		else if (dist < 5.0f && otherSpecies != selfSpecies) { // strong short-range repulsion for all
-			fx -= (dx / dist) * 7.5f;
-			fy -= (dy / dist) * 7.5f;
-		}
+		fx -= (dx / dist) * repulsion;
+		fy -= (dy / dist) * repulsion;
 	}
-	
+
 	// Update velocity
 	p.z += fx * dt;
 	p.w += fy * dt;
 
-	p.z *= 0.99f;
-	p.w *= 0.99f;
+	p.z *= 0.89f;
+	p.w *= 0.89f;
 
 	// Update position
-	p.x += p.z * 20.0f * dt;
-	p.y += p.w * 20.0f * dt;
+	p.x += p.z * 15.0f * dt;
+	p.y += p.w * 15.0f * dt;
 
-	p.x = fmod(p.x + width, width);
-	p.y = fmod(p.y + height, height);
+	// Clamp and add bounce to the positions & velocities
+	if (p.x < margin || p.x > width-margin) {
+		p.z *= -0.76f;
+		p.x = clamp(p.x, margin, width-margin);
+	}
+	if (p.y < margin || p.y > height-margin) {
+		p.w *= -0.76f;
+		p.y = clamp(p.y, margin, height-margin);
+	}
 
 	particles[i] = p;
+}
+
+__kernel void update_particles(__global float4* particles,
+								__global int* species,
+								int width, int height,
+								float dt, int N) {
+	int workItem = get_global_id(0);
+	const float effectDist = 25.0f;
+
+	int childWorkItem0 = workItem * 2;
+	int childWorkItem1 = workItem * 2 + 1;
+
+	if (childWorkItem0 < N) computeParticle(particles, species, childWorkItem0, effectDist, width, height, dt, N);
+	if (childWorkItem1 < N) computeParticle(particles, species, childWorkItem1, effectDist, width, height, dt, N);
 }
