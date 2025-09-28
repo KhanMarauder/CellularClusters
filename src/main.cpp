@@ -13,12 +13,13 @@
 
 int WIDTH = 1300;
 int HEIGHT = 700;
-const int N = 3000;   // number of particles
+const int N = 8000;   // number of particles
 float dt = 0.0f;
 
 // Helper: read file into string
 std::string readFile(const std::string& filename) {
 	std::ifstream file(filename);
+	std::string nullVal("");
 	if (!file.is_open()) throw std::runtime_error("Cannot open file: " + filename);
 	std::stringstream ss;
 	ss << file.rdbuf();
@@ -61,9 +62,9 @@ int main() {
 		return 1;
 	}
 	SDL_Window* window = SDL_CreateWindow("OpenCL Particles", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN);
-	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); // NOTE: Don't add render vsync because it slows down the simulation for some reason
-	
+		WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_ALLOW_HIGHDPI);
+	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); // Do NOT add SDL_RENDERER_PRESENTVSYNC because it locks the simulation FPS!
+
 	// ---------------------------
 	// 2. Initialize particles
 	// ---------------------------
@@ -72,12 +73,12 @@ int main() {
 
 	for (int i = 0; i < N; i++) {
 	    particles[i] = {
-	        float(rand()) / RAND_MAX * float(WIDTH),   // random float [0, WIDTH)
-	        float(rand()) / RAND_MAX * float(HEIGHT),  // random float [0, HEIGHT)
-	        0.0f,
-	        0.0f
+		float(rand()) / RAND_MAX * float(WIDTH),   // random float [0, WIDTH)
+		float(rand()) / RAND_MAX * float(HEIGHT),  // random float [0, HEIGHT)
+		0.0f,
+		0.0f
 	    };
-	    species[i] = rand() % 4;
+	    species[i] = rand() % 5;
 	}
 
 	// ---------------------------
@@ -97,15 +98,15 @@ int main() {
 	cl_mem bufParticles = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
 		sizeof(cl_float4)*N, particles.data(), &err);
 	cl_mem bufSpecies = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-		sizeof(float)*N, species.data(), &err);
-
+		sizeof(int)*N, species.data(), &err);
 
 	// ---------------------------
 	// Render the compiling screen
 	// ---------------------------
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderClear(renderer);
-	SDL_Surface* surface = IMG_Load("loading.png"); // Load the loading screen texture
+	SDL_Surface* surface = IMG_Load("./loading.png"); // Load the loading screen texture
+
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 	SDL_FreeSurface(surface);
 
@@ -124,9 +125,10 @@ int main() {
 	// Cleanup
 	SDL_DestroyTexture(texture);
 
-	// ---------------------------	
+	// ---------------------------
 
-	std::string kernelSrc = readFile("gpu-code/particles.cl");
+	std::string kernelSrc = readFile("./gpu-code/particles.cl");
+
 	const char* src = kernelSrc.c_str();
 	cl_program program = clCreateProgramWithSource(context, 1, &src, nullptr, &err);
 	if (clBuildProgram(program, 0, nullptr, nullptr, nullptr, nullptr) != CL_SUCCESS) {
@@ -144,10 +146,10 @@ int main() {
 	// ---------------------------
 	bool running = true;
 	Uint64 now = SDL_GetPerformanceCounter();
-	
+
 	while (running) {
 		SDL_GL_GetDrawableSize(window, &WIDTH, &HEIGHT);
-	
+
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) running = false;
@@ -155,9 +157,9 @@ int main() {
 
 		now = SDL_GetPerformanceCounter();
 		static Uint64 last = 0;
-				
+
 		if (last != 0) dt = (float)(now - last) / SDL_GetPerformanceFrequency() / 6;
-		
+
 
 		// Run kernel
 		clSetKernelArg(kernel, 0, sizeof(cl_mem), &bufParticles);
@@ -167,7 +169,7 @@ int main() {
 		clSetKernelArg(kernel, 4, sizeof(float), &dt);
 		clSetKernelArg(kernel, 5, sizeof(int), &N);
 
-		size_t globalSize = N;
+		size_t globalSize = (N + 1) / 2;
 		clEnqueueNDRangeKernel(queue, kernel, 1, nullptr, &globalSize, nullptr, 0, nullptr, nullptr);
 		clFinish(queue);
 
@@ -182,12 +184,14 @@ int main() {
 		for (int i = 0; i < N; i++) {
 			SDL_Color color;
 			switch ((int)species[i]) {
-				case 0: color = {255,   0,   0, 255}; break; // red
-				case 1: color = {255, 255,   0, 255}; break; // yellow
-				case 2: color = {135, 206, 235, 255}; break; // sky blue
-				case 3: color = {  0, 128,   0, 255}; break; // green
+				case 0: color =  {255,   0,   0, 255}; break; // red
+				case 1: color =  {255, 255,   0, 255}; break; // yellow
+				case 2: color =  {135, 206, 235, 255}; break; // sky blue
+				case 3: color =  {  0, 128,   0, 255}; break; // green
+				case 4: color =  {23, 100, 255, 255}; break;  // abiotic particles
 				default: color = {255, 255, 255, 255}; break;
 			}
+
 			SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 			int x = (int)particles[i].s[0];
 			int y = (int)particles[i].s[1];
