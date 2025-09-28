@@ -75,7 +75,7 @@ __kernel void update_particles(__global float4* particles,
 								int width, int height,
 								float dt, int N) {
 	int workItem = get_global_id(0);
-	const float effectDist = 25.0f;
+	const float effectDist = 30.0f;
 
 	int childWorkItem0 = workItem * 2;
 	int childWorkItem1 = workItem * 2 + 1;
