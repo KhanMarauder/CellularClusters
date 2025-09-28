@@ -29,6 +29,8 @@ that contains the code that runs on the CPU/GPU in parallel.
 	<img width="480" height="245" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/d1e96904-9dcc-41af-86b2-4d8f7cba6768" />
 	<img width="410" height="310" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/49e31ad1-62e9-40ed-ad7a-ba5adeb7bf93" />
 	<img width="300" height="390" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/cdb01788-ec61-499c-b4d8-f5701637580b" />
+	<img width="295" height="200" alt="image" src="https://github.com/user-attachments/assets/a955775c-aa62-454f-bc6b-f04f7b61795b" />
+	<img width="235" height="270" alt="image" src="https://github.com/user-attachments/assets/06fc6b62-5353-44ca-a0d9-4c13a98bc1a8" />
 	<figcaption><br>Sep 28, 2025 @ 6-7 PM - Some 'rotifer' organisms.</figcaption>
 </figure>
 
