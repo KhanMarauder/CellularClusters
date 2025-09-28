@@ -11,8 +11,8 @@
 #include <sstream>
 #include <stdexcept>
 
-int WIDTH = 1300;
-int HEIGHT = 700;
+int WIDTH  = 2000;
+int HEIGHT = 2000;
 const int N = 8000;   // number of particles
 float dt = 0.0f;
 
@@ -70,15 +70,21 @@ int main() {
 	std::vector<cl_float4> particles(N);
 	std::vector<int> species(N);
 
+	int winW, winH;
+	SDL_GetWindowSize(window, &winW, &winH);
+
 	for (int i = 0; i < N; i++) {
 	    particles[i] = {
-		float(rand()) / RAND_MAX * float(WIDTH),   // random float [0, WIDTH)
-		float(rand()) / RAND_MAX * float(HEIGHT),  // random float [0, HEIGHT)
+		float(rand()) / RAND_MAX * float(winW),   // random float [0, WIDTH)
+		float(rand()) / RAND_MAX * float(winH),  // random float [0, HEIGHT)
 		0.0f,
 		0.0f
 	    };
 	    species[i] = rand() % 5;
 	}
+
+	WIDTH = 1300;
+	HEIGHT = 700;
 
 	// ---------------------------
 	// 3. OpenCL setup
