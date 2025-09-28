@@ -85,6 +85,7 @@ int main() {
 
 	WIDTH = 1300;
 	HEIGHT = 700;
+	SDL_SetWindowSize(window, WIDTH, HEIGHT);
 
 	// ---------------------------
 	// 3. OpenCL setup
