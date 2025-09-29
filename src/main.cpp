@@ -1,4 +1,4 @@
-/ src/main.cpp
+// src/main.cpp
 
 #define CL_TARGET_OPENCL_VERSION 300
 
@@ -175,7 +175,7 @@ int main() {
 		clSetKernelArg(kernel, 4, sizeof(float), &dt);
 		clSetKernelArg(kernel, 5, sizeof(int), &N);
 
-		size_t globalSize = N;
+		size_t globalSize = (N + 1) / 2;
 		clEnqueueNDRangeKernel(queue, kernel, 1, nullptr, &globalSize, nullptr, 0, nullptr, nullptr);
 		clFinish(queue);
 
