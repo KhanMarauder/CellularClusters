@@ -11,11 +11,13 @@ __constant float attraction[5][5] = { // Effect table courtesy of Claude
 
 __constant float margin = 3.0f;
 
-void computeParticle(__global float4* particles,
+__kernel void update_particles(__global float4* particles,
 								__global int* species,
-								int i, float effectDist,
 								int width, int height,
 								float dt, int N) {
+	int i = get_global_id(0);
+	const float effectDist = 30.0f;
+
 	float4 p = particles[i];
 	float fx = 0.0f;
 	float fy = 0.0f;
@@ -68,18 +70,4 @@ void computeParticle(__global float4* particles,
 	}
 
 	particles[i] = p;
-}
-
-__kernel void update_particles(__global float4* particles,
-								__global int* species,
-								int width, int height,
-								float dt, int N) {
-	int workItem = get_global_id(0);
-	const float effectDist = 30.0f;
-
-	int childWorkItem0 = workItem * 2;
-	int childWorkItem1 = workItem * 2 + 1;
-
-	if (childWorkItem0 < N) computeParticle(particles, species, childWorkItem0, effectDist, width, height, dt, N);
-	if (childWorkItem1 < N) computeParticle(particles, species, childWorkItem1, effectDist, width, height, dt, N);
 }
