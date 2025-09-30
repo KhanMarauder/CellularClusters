@@ -4,12 +4,12 @@ __constant float attraction[5][5] = { // Effect table courtesy of Claude
  // | Red   | Yel    | Blu    | Grn  | Part |
     {2.5f,   -2.5f,  2.789f,  0.3f,  0.1f   },   // Red attractions
     {2.15f,  1.2f,   1.89f,   0.15f, 1.05f  }, // Yellow attractions  
-    {2.4f,   2.1f,  2.3f,    -0.3f, 2.4f   },   // Blue attractions
+    {2.7f,   3.1f,  2.3f,    -0.3f, 2.4f   },   // Blue attractions
     {3.05f,  -0.25f, 1.05f,   1.98f, -0.76f }, // Green attractions
     {0.01f,  3.6f,   1.0f,    -1.6f, 1.7f   }   // Abiotic particle attractions
 };
 
-__constant float margin = 3.0f;
+__constant float margin = 10.0f;
 __constant float maxVel = 1.0f;
 
 void computeParticle(__global float4* particles,
