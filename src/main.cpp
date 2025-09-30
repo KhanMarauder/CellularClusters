@@ -11,14 +11,14 @@
 #include <sstream>
 #include <stdexcept>
 
-int WIDTH  = 2000;
-int HEIGHT = 2000;
+int WIDTH  = 700;
+int HEIGHT = 400;
 const int N = 8000;   // number of particles
 float dt = 0.0f;
 
 // Helper: read file into string
 std::string readFile(const std::string& filename) {
-	std::ifstream file(filename);
+std::ifstream file(filename);
 	if (!file.is_open()) throw std::runtime_error("Cannot open file: " + filename);
 	std::stringstream ss;
 	ss << file.rdbuf();
@@ -81,8 +81,10 @@ int main() {
 	std::vector<cl_float4> particles(N);
 	std::vector<int> species(N);
 
-	int winW, winH;
-	SDL_GetWindowSize(window, &winW, &winH);
+	int x, y;
+	SDL_GetWindowSize(window, &x, &y);
+	const int winW = x;
+	const int winH = y;
 
 	for (int i = 0; i < N; i++) {
 	    particles[i] = {
@@ -93,10 +95,6 @@ int main() {
 	    };
 	    species[i] = rand() % 5;
 	}
-
-	WIDTH = 1300;
-	HEIGHT = 700;
-	SDL_SetWindowSize(window, WIDTH, HEIGHT);
 
 	// ---------------------------
 	// 3. OpenCL setup
