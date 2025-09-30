@@ -118,7 +118,7 @@ int main() {
 
 	// Render the image
 	int width = 127*5;
-	int height = 18*5;
+	int height = 19*5;
 	SDL_Rect dstRect = {(WIDTH/2) - (width/2), (HEIGHT/2) - (height/2), width, height};
 	SDL_RenderCopy(renderer, texture, nullptr, &dstRect);
 
@@ -170,8 +170,8 @@ int main() {
 		// Run kernel
 		clSetKernelArg(kernel, 0, sizeof(cl_mem), &bufParticles);
 		clSetKernelArg(kernel, 1, sizeof(cl_mem), &bufSpecies);
-		clSetKernelArg(kernel, 2, sizeof(int), &WIDTH);
-		clSetKernelArg(kernel, 3, sizeof(int), &HEIGHT);
+		clSetKernelArg(kernel, 2, sizeof(int), &winW);
+		clSetKernelArg(kernel, 3, sizeof(int), &winH);
 		clSetKernelArg(kernel, 4, sizeof(float), &dt);
 		clSetKernelArg(kernel, 5, sizeof(int), &N);
 
@@ -194,7 +194,7 @@ int main() {
 				case 1: color =  {255, 255,   0, 255}; break; // yellow
 				case 2: color =  {135, 206, 235, 255}; break; // sky blue
 				case 3: color =  {  0, 128,   0, 255}; break; // green
-				case 4: color =  {23, 100, 255, 255}; break;  // abiotic particles
+				case 4: color =  {23, 100, 255, 255};  break; // abiotic particles
 				default: color = {255, 255, 255, 255}; break;
 			}
 
