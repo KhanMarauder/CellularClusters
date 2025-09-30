@@ -3,6 +3,7 @@
 .PHONY: all
 
 all:
+	@echo "If you are compiling on windows, please run cmake. Install by running 'winget install Kitware.CMake'."
 	@g++ src/main.cpp -o run.elf -lOpenCL -lSDL2 -lSDL2_image -march=native -pthread -O3
 
 installReqDeps:
