@@ -25,6 +25,17 @@ std::string readFile(const std::string& filename) {
 	return ss.str();
 }
 
+// Psuedo-random number
+static uint32_t xorshift_state = 123456789;
+
+inline uint32_t xorshift32() {
+	uint32_t x = xorshift_state;
+	x ^= x << 13;
+	x ^= x >> 17;
+	x ^= x << 5;
+	return xorshift_state = x;
+}
+
 void SDL_RenderDrawCircle(SDL_Renderer* renderer, int32_t centerX, int32_t centerY, int32_t radius) {
 	int32_t x = radius;
 	int32_t y = 0;
@@ -154,8 +165,6 @@ int main() {
 	Uint64 now = SDL_GetPerformanceCounter();
 
 	while (running) {
-		SDL_GL_GetDrawableSize(window, &WIDTH, &HEIGHT);
-
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) running = false;
@@ -187,7 +196,11 @@ int main() {
 		SDL_SetRenderDrawColor(renderer, 25, 25, 25, 255);
 		SDL_RenderClear(renderer);
 
-		for (int i = 0; i < N; i++) {
+		// Have the loop start at a random item and iterate through the loop looping around to 0
+		int rand = xorshift32() % (N + 1);
+		for (int l = rand; l < N + rand; l++) {
+			int i = (l + N) % N;
+
 			SDL_Color color;
 			switch ((int)species[i]) {
 				case 0: color =  {255,   0,   0, 255}; break; // red
