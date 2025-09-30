@@ -9,7 +9,8 @@ that contains the code that runs on the CPU/GPU in parallel.
 
 | Date | Description | Reason & Fix |
 |:-|:-|:-|
-| September 27-28, 2025 | The particles were rendering in hyper colorful blobs. | This was caused by the processing kernel thinking the species vector was a *float* instead of an *int*. This was because I forgot the change the `cl_mem` buffer DT from `sizeof(float)*N` to `sizeof(int)*N`. I needed to change this becasue the species vector was originally a float. not an *int*.|
+| September 27-28, 2025 | The particles were rendering in hyper colorful blobs. | This was caused by the processing kernel thinking the species vector was a *float* instead of an *int*. This was because I forgot the change the `cl_mem` buffer DT from `sizeof(float)*N` to `sizeof(int)*N`. I needed to change this becasue the species vector was originally a float. not an *int*. |
+| September 29, 2025 | Windows couldn't build because of BASH-style Makefile. | This was becasue I made the Makefile for Debian-based systems, not full OS. Fixed by adding `CMakeLists.txt`. |
 
 ***
 
@@ -40,4 +41,15 @@ that contains the code that runs on the CPU/GPU in parallel.
 	<img width="235" height="165" alt="image" src="https://github.com/user-attachments/assets/28c4a4a5-5124-47e1-a922-be33e1789ff8" />
 	<img width="365" height="260" alt="image" src="https://github.com/user-attachments/assets/3e336799-d14f-44d2-9f29-396e7554356d" />
 	<figcaption><br>Sep 28, 2025 @ 7:13 PM - Some 'helizoan' organism patterns.</figcaption>
+</figure>
+
+***
+
+<figure>
+	<img width="57" height="55" alt="image" src="https://github.com/user-attachments/assets/cae97cd5-7d39-4781-b142-3ff1d8199a77" />
+	<img width="80" height="54" alt="image" src="https://github.com/user-attachments/assets/a43b42e2-cea9-4689-968b-4b6fb7a29346" />
+	<img width="44" height="42" alt="image" src="https://github.com/user-attachments/assets/52e635a7-7c0e-4da6-afba-953bb0fe5f1b" />
+	<img width="60" height="43" alt="image" src="https://github.com/user-attachments/assets/fffa4894-d55d-498f-9a51-15be611ea0c8" />
+	<img width="46" height="38" alt="image" src="https://github.com/user-attachments/assets/d782cd42-8b50-460a-a4da-ec49cf4914c1" />
+	<figcaption>Sep 30, 2025 @ 1:24 PM - Some 'jellyfish' organisms.</figcaption>
 </figure>
