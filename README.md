@@ -51,5 +51,7 @@ that contains the code that runs on the CPU/GPU in parallel.
 	<img width="90" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/52e635a7-7c0e-4da6-afba-953bb0fe5f1b" />
 	<img width="120" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/fffa4894-d55d-498f-9a51-15be611ea0c8" />
 	<img width="100" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/d782cd42-8b50-460a-a4da-ec49cf4914c1" />
+	<img width="100" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/2de1e6db-b3cd-46d4-845d-27017b2b3186" />
+	<img width="60" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/09eae9ff-7d8a-4406-b6dc-c23e65ff9186" />
 	<figcaption>Sep 30, 2025 @ 1:24 PM - Some 'jellyfish' organisms.</figcaption>
 </figure>
