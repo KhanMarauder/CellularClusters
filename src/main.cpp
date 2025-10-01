@@ -18,7 +18,7 @@ float dt = 0.0f;
 
 // Helper: read file into string
 std::string readFile(const std::string& filename) {
-std::ifstream file(filename);
+	std::ifstream file(filename);
 	if (!file.is_open()) throw std::runtime_error("Cannot open file: " + filename);
 	std::stringstream ss;
 	ss << file.rdbuf();
