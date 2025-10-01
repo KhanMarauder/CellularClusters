@@ -10,7 +10,7 @@ that contains the code that runs on the CPU/GPU in parallel.
 | Date | Description | Reason & Fix |
 |:-|:-|:-|
 | September 27-28, 2025 | The particles were rendering in hyper colorful blobs. | This was caused by the processing kernel thinking the species vector was a *float* instead of an *int*. This was because I forgot the change the `cl_mem` buffer DT from `sizeof(float)*N` to `sizeof(int)*N`. I needed to change this becasue the species vector was originally a float. not an *int*. |
-| September 29, 2025 | Windows couldn't build because of BASH-style Makefile. | This was becasue I made the Makefile for Debian-based systems, not OS independable. Fixed by adding `CMakeLists.txt`. |
+| September 29, 2025 | Windows couldn't build because of BASH-style Makefile. | This was becasue I made the Makefile for Debian-based systems, not OS independant. Fixed by adding `CMakeLists.txt`. |
 
 ***
 
