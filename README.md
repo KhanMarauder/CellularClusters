@@ -18,14 +18,14 @@ that contains the code that runs on the CPU/GPU in parallel.
 
 <figure>
 	<img width="1000" height="auto" alt="Screenshot 2025-09-28 5 45 18 PM" src="https://github.com/user-attachments/assets/592072fd-ddc2-4468-a06d-3806098d7828" />
-	<figcaption>Sep 28, 2025 @ 5:28 PM - The tuned version of the simulation so far.</figcaption>
+	<figcaption><br>Sep 28, 2025 @ 5:28 PM - The tuned version of the simulation so far.</figcaption>
 </figure>
 
 ***
 
 <figure>
 	<img width="1000" height="auto" alt="image" src="https://github.com/user-attachments/assets/87fa4796-aead-443d-a5b4-813cee201998" />
-	<figcaption>Oct 9, 2025 @ 9:32 AM - After some more tuning, I have a more stable simulation.</figcaption>
+	<figcaption><br>Oct 9, 2025 @ 9:32 AM - After some more tuning, I have a more stable simulation.</figcaption>
 </figure>
 
 ***
@@ -62,12 +62,12 @@ that contains the code that runs on the CPU/GPU in parallel.
 	<img width="100" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/d782cd42-8b50-460a-a4da-ec49cf4914c1" />
 	<img width="100" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/2de1e6db-b3cd-46d4-845d-27017b2b3186" />
 	<img width="60" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/09eae9ff-7d8a-4406-b6dc-c23e65ff9186" />
-	<figcaption>Sep 30, 2025 @ 1:24 PM - Some 'jellyfish' organisms.</figcaption>
+	<figcaption><br>Sep 30, 2025 @ 1:24 PM - Some 'jellyfish' organisms.</figcaption>
 </figure>
 
 ***
 
 <figure>
 	<img width="80" height="auti" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/e8ea72b6-bd2c-4360-a48d-bbde70b28e3f" />
-	<figcaption>Oct 9, 2025 @ 9:28 AM - Another 'jellyfish' organism.</figcaption>
+	<figcaption><br>Oct 9, 2025 @ 9:28 AM - Another 'jellyfish' organism.</figcaption>
 </figure>
