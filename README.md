@@ -1,6 +1,6 @@
 # **Overview**
 
-To modify the cellular stuff, modify **gpu-code/particle.cl**. This is the file	
+To modify the cellular logic and weights, modify **gpu-code/particle.cl**. This is the file	
 that contains the code that runs on the CPU/GPU in parallel.
 
 ***
@@ -54,4 +54,11 @@ that contains the code that runs on the CPU/GPU in parallel.
 	<img width="100" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/2de1e6db-b3cd-46d4-845d-27017b2b3186" />
 	<img width="60" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/09eae9ff-7d8a-4406-b6dc-c23e65ff9186" />
 	<figcaption>Sep 30, 2025 @ 1:24 PM - Some 'jellyfish' organisms.</figcaption>
+</figure>
+
+***
+
+<figure>
+	<img width="80" height="auti" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/e8ea72b6-bd2c-4360-a48d-bbde70b28e3f" />
+	<figcaption>Oct 9, 2025 @ 9:28 AM - Another 'jellyfish' organism.</figcaption>
 </figure>
