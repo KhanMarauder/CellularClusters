@@ -17,11 +17,20 @@ that contains the code that runs on the CPU/GPU in parallel.
 # ***Screenshots***
 
 <figure>
-	<img width="1366" height="768" alt="Screenshot 2025-09-28 5 45 18 PM" src="https://github.com/user-attachments/assets/592072fd-ddc2-4468-a06d-3806098d7828" />
+	<img width="1000" height="auto" alt="Screenshot 2025-09-28 5 45 18 PM" src="https://github.com/user-attachments/assets/592072fd-ddc2-4468-a06d-3806098d7828" />
 	<figcaption>Sep 28, 2025 @ 5:28 PM - The tuned version of the simulation so far.</figcaption>
 </figure>
 
 ***
+
+<figure>
+	<img width="1000" height="auto" alt="image" src="https://github.com/user-attachments/assets/87fa4796-aead-443d-a5b4-813cee201998" />
+	<figcaption>Oct 9, 2025 @ 9:32 AM - After some more tuning, I have a more stable simulation.</figcaption>
+</figure>
+
+***
+
+# ***Organsims***
 
 <figure>
 	<img width="130" height="auto" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/8823513e-226c-45de-ac0c-996e099e5bd4" />
