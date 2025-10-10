@@ -26,7 +26,7 @@ std::string readFile(const std::string& filename) {
 	return ss.str();
 }
 
-// Psuedo-random number
+// Pseudo-random number
 static uint32_t xorshift_state = 123456789;
 
 inline uint32_t xorshift32() {
@@ -117,8 +117,8 @@ int main() {
 
 	for (int i = 0; i < N; i++) {
 	    particles[i] = {
-		float(rand()) / RAND_MAX * float(winW),   // random float [0, WIDTH)
-		float(rand()) / RAND_MAX * float(winH),  // random float [0, HEIGHT)
+		static_cast<float>(rand()) / RAND_MAX * static_cast<float>(winW),   // random float [0, WIDTH)
+		static_cast<float>(rand()) / RAND_MAX * static_cast<float>(winH),  // random float [0, HEIGHT)
 		0.0f,
 		0.0f
 	    };
@@ -128,10 +128,9 @@ int main() {
 	// ---------------------------
 	// 3. OpenCL setup
 	// ---------------------------
-	cl_int err;
 	cl_platform_id platform;
 	cl_device_id device;
-	err = clGetPlatformIDs(1, &platform, nullptr);
+	cl_int err = clGetPlatformIDs(1, &platform, nullptr);
 	if (err != CL_SUCCESS) { std::cerr << "No OpenCL platform\n"; return 1; }
 	err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_DEFAULT, 1, &device, nullptr);
 	if (err != CL_SUCCESS) { std::cerr << "No OpenCL device\n"; return 1; }
@@ -211,7 +210,7 @@ int main() {
 		now = SDL_GetPerformanceCounter();
 		static Uint64 last = 0;
 
-		if (last != 0) dt = (float)(now - last) / SDL_GetPerformanceFrequency() / 6;
+		if (last != 0) dt = static_cast<float>(now - last) / SDL_GetPerformanceFrequency() / 6;
 
 
 		// Run kernel
@@ -250,8 +249,8 @@ int main() {
 			}
 
 			SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-			int x = (int)particles[i].s[0];
-			int y = (int)particles[i].s[1];
+			int x = static_cast<int>(particles[i].s[0]);
+			int y = static_cast<int>(particles[i].s[1]);
 			SDL_RenderDrawCircle(renderer, x, y, 1);
 		}
 
