@@ -14,7 +14,7 @@
 
 int WIDTH  = 700;
 int HEIGHT = 400;
-const int N = 8000;   // number of particles
+constexpr int N = 8000;   // number of particles
 float dt = 0.0f;
 
 // Helper: read file into string
@@ -37,7 +37,7 @@ inline uint32_t xorshift32() {
 	return xorshift_state = x;
 }
 
-void SDL_RenderDrawCircle(SDL_Renderer* renderer, int32_t centerX, int32_t centerY, int32_t radius) {
+void SDL_RenderDrawCircle(SDL_Renderer* renderer, const int32_t centerX, const int32_t centerY, const int32_t radius) {
 	int32_t x = radius;
 	int32_t y = 0;
 	int32_t tx = 1;
@@ -80,8 +80,7 @@ int main() {
 	}
 
 	// Initialize SDL_image for PNG support
-	int imgFlags = IMG_INIT_PNG;
-	if ((IMG_Init(imgFlags) & imgFlags) != imgFlags) {
+	if (int imgFlags = IMG_INIT_PNG; (IMG_Init(imgFlags) & imgFlags) != imgFlags) {
 		std::cerr << "SDL_image could not initialize PNG support! IMG_Error: " << IMG_GetError() << "\n";
 		SDL_Quit();
 		return 1;
@@ -162,9 +161,9 @@ int main() {
 
 	// Render the image if texture is available
 	if (texture) {
-		int width = 127*5;
-		int height = 19*5;
-		SDL_Rect dstRect = {(WIDTH/2) - (width/2), (HEIGHT/2) - (height/2), width, height};
+		constexpr int width = 127*5;
+		constexpr int height = 19*5;
+		const SDL_Rect dstRect = {(WIDTH/2) - (width/2), (HEIGHT/2) - (height/2), width, height};
 		if (SDL_RenderCopy(renderer, texture, nullptr, &dstRect) != 0) {
 			std::cerr << "SDL_RenderCopy failed: " << SDL_GetError() << "\n";
 		}
@@ -181,10 +180,10 @@ int main() {
 
 	// ---------------------------
 
-	std::string kernelSrc = readFile("./gpu-code/particles.cl");
+	const std::string kernelSrc = readFile("./gpu-code/particles.cl");
 
 	const char* src = kernelSrc.c_str();
-	cl_program program = clCreateProgramWithSource(context, 1, &src, nullptr, &err);
+	const cl_program program = clCreateProgramWithSource(context, 1, &src, nullptr, &err);
 	if (clBuildProgram(program, 0, nullptr, nullptr, nullptr, nullptr) != CL_SUCCESS) {
 		size_t logSize;
 		clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, 0, nullptr, &logSize);
@@ -193,7 +192,7 @@ int main() {
 		std::cerr << "Build error:\n" << log.data() << "\n";
 		return 1;
 	}
-	cl_kernel kernel = clCreateKernel(program, "update_particles", &err);
+	const cl_kernel kernel = clCreateKernel(program, "update_particles", &err);
 
 	// ---------------------------
 	// 4. Main loop
@@ -234,12 +233,12 @@ int main() {
 		SDL_RenderClear(renderer);
 
 		// Have the loop start at a random item and iterate through the loop looping around to 0
-		int rand = xorshift32() % (N + 1);
+		const int rand = xorshift32() % (N + 1);
 		for (int l = rand; l < N + rand; l++) {
 			int i = (l + N) % N;
 
 			SDL_Color color;
-			switch ((int)species[i]) {
+			switch (species[i]) {
 				case 0: color =  {255,   0,   0, 255}; break; // red
 				case 1: color =  {255, 255,   0, 255}; break; // yellow
 				case 2: color =  {135, 206, 235, 255}; break; // sky blue
