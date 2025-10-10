@@ -204,6 +204,7 @@ int main() {
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) running = false;
+			if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) running = false;
 		}
 
 		now = SDL_GetPerformanceCounter();
