@@ -71,9 +71,31 @@ int main() {
 		std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << "\n";
 		return 1;
 	}
+
+	// Initialize SDL_image for PNG support
+	int imgFlags = IMG_INIT_PNG;
+	if ((IMG_Init(imgFlags) & imgFlags) != imgFlags) {
+		std::cerr << "SDL_image could not initialize PNG support! IMG_Error: " << IMG_GetError() << "\n";
+		SDL_Quit();
+		return 1;
+	}
+
 	SDL_Window* window = SDL_CreateWindow("OpenCL Particles", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_ALLOW_HIGHDPI);
+	if (!window) {
+		std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << "\n";
+		IMG_Quit();
+		SDL_Quit();
+		return 1;
+	}
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); // Do NOT add SDL_RENDERER_PRESENTVSYNC because it locks the simulation FPS!
+	if (!renderer) {
+		std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << "\n";
+		SDL_DestroyWindow(window);
+		IMG_Quit();
+		SDL_Quit();
+		return 1;
+	}
 
 	// ---------------------------
 	// 2. Initialize particles
@@ -121,15 +143,26 @@ int main() {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderClear(renderer);
 	SDL_Surface* surface = IMG_Load("./loading.png"); // Load the loading screen texture
+	SDL_Texture* texture = nullptr;
+	if (!surface) {
+		std::cerr << "Failed to load image './loading.png'! IMG_Error: " << IMG_GetError() << "\n";
+	} else {
+		texture = SDL_CreateTextureFromSurface(renderer, surface);
+		SDL_FreeSurface(surface);
+		if (!texture) {
+			std::cerr << "Failed to create texture from surface! SDL_Error: " << SDL_GetError() << "\n";
+		}
+	}
 
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-	SDL_FreeSurface(surface);
-
-	// Render the image
-	int width = 127*5;
-	int height = 19*5;
-	SDL_Rect dstRect = {(WIDTH/2) - (width/2), (HEIGHT/2) - (height/2), width, height};
-	SDL_RenderCopy(renderer, texture, nullptr, &dstRect);
+	// Render the image if texture is available
+	if (texture) {
+		int width = 127*5;
+		int height = 19*5;
+		SDL_Rect dstRect = {(WIDTH/2) - (width/2), (HEIGHT/2) - (height/2), width, height};
+		if (SDL_RenderCopy(renderer, texture, nullptr, &dstRect) != 0) {
+			std::cerr << "SDL_RenderCopy failed: " << SDL_GetError() << "\n";
+		}
+	}
 
 	SDL_RenderPresent(renderer); // Present the screen
 
@@ -138,7 +171,7 @@ int main() {
 	SDL_Delay(50); // give the OS a chance to redraw
 
 	// Cleanup
-	SDL_DestroyTexture(texture);
+	if (texture) SDL_DestroyTexture(texture);
 
 	// ---------------------------
 
@@ -224,6 +257,7 @@ int main() {
 	// ---------------------------
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+	IMG_Quit();
 	SDL_Quit();
 
 	clReleaseMemObject(bufParticles);
