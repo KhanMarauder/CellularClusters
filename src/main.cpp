@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <random>
 #include <sstream>
 #include <stdexcept>
 
@@ -64,6 +65,12 @@ void SDL_RenderDrawCircle(SDL_Renderer* renderer, int32_t centerX, int32_t cente
 }
 
 int main() {
+
+	// use true randomness
+	std::random_device rd;
+	srand(rd());
+	xorshift_state = rd();
+
 	// ---------------------------
 	// 1. SDL2 setup
 	// ---------------------------
