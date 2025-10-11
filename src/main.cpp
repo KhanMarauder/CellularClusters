@@ -131,16 +131,23 @@ int main() {
 	cl_device_id device;
 	cl_int err = clGetPlatformIDs(1, &platform, nullptr);
 	if (err != CL_SUCCESS) { std::cerr << "No OpenCL platform\n"; return 1; }
+
 	err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_DEFAULT, 1, &device, nullptr);
 	if (err != CL_SUCCESS) { std::cerr << "No OpenCL device\n"; return 1; }
 
 	cl_context context = clCreateContext(nullptr, 1, &device, nullptr, nullptr, &err);
-	cl_command_queue queue = clCreateCommandQueueWithProperties(context, device, 0, &err);
+	if (err != CL_SUCCESS) { std::cerr << "Failed to create OpenCL context\n"; return 1; }
+
+	cl_command_queue queue = clCreateCommandQueueWithProperties(context, device, nullptr, &err);
+	if (err != CL_SUCCESS) { std::cerr << "Failed to create OpenCL command queue\n"; return 1; }
 
 	cl_mem bufParticles = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
 		sizeof(cl_float4)*N, particles.data(), &err);
+	if (err != CL_SUCCESS) { std::cerr << "Failed to create OpenCL particles buffer\n"; return 1; }
+
 	cl_mem bufSpecies = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
 		sizeof(int)*N, species.data(), &err);
+	if (err != CL_SUCCESS) { std::cerr << "Failed to create OpenCL species buffer\n"; return 1; }
 
 	// ---------------------------
 	// Render the compiling screen
@@ -156,6 +163,7 @@ int main() {
 		SDL_FreeSurface(surface);
 		if (!texture) {
 			std::cerr << "Failed to create texture from surface! SDL_Error: " << SDL_GetError() << "\n";
+			return 1;
 		}
 	}
 
@@ -181,9 +189,10 @@ int main() {
 	// ---------------------------
 
 	const std::string kernelSrc = readFile("./gpu-code/particles.cl");
-
 	const char* src = kernelSrc.c_str();
 	const cl_program program = clCreateProgramWithSource(context, 1, &src, nullptr, &err);
+	if (err != CL_SUCCESS) { std::cerr << "Failed to create OpenCL program\n"; return 1; }
+
 	if (clBuildProgram(program, 0, nullptr, nullptr, nullptr, nullptr) != CL_SUCCESS) {
 		size_t logSize;
 		clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, 0, nullptr, &logSize);
@@ -193,6 +202,7 @@ int main() {
 		return 1;
 	}
 	const cl_kernel kernel = clCreateKernel(program, "update_particles", &err);
+	if (err != CL_SUCCESS) { std::cerr << "Failed to create OpenCL kernel\n"; return 1; }
 
 	// ---------------------------
 	// 4. Main loop
