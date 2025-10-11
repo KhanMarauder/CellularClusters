@@ -8,12 +8,13 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <random>
 #include <sstream>
 #include <stdexcept>
 
 int WIDTH  = 700;
 int HEIGHT = 400;
-const int N = 8000;   // number of particles
+constexpr int N = 8000;   // number of particles
 float dt = 0.0f;
 
 // Helper: read file into string
@@ -25,7 +26,7 @@ std::string readFile(const std::string& filename) {
 	return ss.str();
 }
 
-// Psuedo-random number
+// Pseudo-random number
 static uint32_t xorshift_state = 123456789;
 
 inline uint32_t xorshift32() {
@@ -36,7 +37,7 @@ inline uint32_t xorshift32() {
 	return xorshift_state = x;
 }
 
-void SDL_RenderDrawCircle(SDL_Renderer* renderer, int32_t centerX, int32_t centerY, int32_t radius) {
+void SDL_RenderDrawCircle(SDL_Renderer* renderer, const int32_t centerX, const int32_t centerY, const int32_t radius) {
 	int32_t x = radius;
 	int32_t y = 0;
 	int32_t tx = 1;
@@ -64,6 +65,12 @@ void SDL_RenderDrawCircle(SDL_Renderer* renderer, int32_t centerX, int32_t cente
 }
 
 int main() {
+
+	// use true randomness
+	std::random_device rd;
+	srand(rd());
+	xorshift_state = rd();
+
 	// ---------------------------
 	// 1. SDL2 setup
 	// ---------------------------
@@ -71,9 +78,30 @@ int main() {
 		std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << "\n";
 		return 1;
 	}
+
+	// Initialize SDL_image for PNG support
+	if (int imgFlags = IMG_INIT_PNG; (IMG_Init(imgFlags) & imgFlags) != imgFlags) {
+		std::cerr << "SDL_image could not initialize PNG support! IMG_Error: " << IMG_GetError() << "\n";
+		SDL_Quit();
+		return 1;
+	}
+
 	SDL_Window* window = SDL_CreateWindow("OpenCL Particles", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_ALLOW_HIGHDPI);
+	if (!window) {
+		std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << "\n";
+		IMG_Quit();
+		SDL_Quit();
+		return 1;
+	}
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); // Do NOT add SDL_RENDERER_PRESENTVSYNC because it locks the simulation FPS!
+	if (!renderer) {
+		std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << "\n";
+		SDL_DestroyWindow(window);
+		IMG_Quit();
+		SDL_Quit();
+		return 1;
+	}
 
 	// ---------------------------
 	// 2. Initialize particles
@@ -88,8 +116,8 @@ int main() {
 
 	for (int i = 0; i < N; i++) {
 	    particles[i] = {
-		float(rand()) / RAND_MAX * float(winW),   // random float [0, WIDTH)
-		float(rand()) / RAND_MAX * float(winH),  // random float [0, HEIGHT)
+		static_cast<float>(rand()) / RAND_MAX * static_cast<float>(winW),   // random float [0, WIDTH)
+		static_cast<float>(rand()) / RAND_MAX * static_cast<float>(winH),  // random float [0, HEIGHT)
 		0.0f,
 		0.0f
 	    };
@@ -99,10 +127,9 @@ int main() {
 	// ---------------------------
 	// 3. OpenCL setup
 	// ---------------------------
-	cl_int err;
 	cl_platform_id platform;
 	cl_device_id device;
-	err = clGetPlatformIDs(1, &platform, nullptr);
+	cl_int err = clGetPlatformIDs(1, &platform, nullptr);
 	if (err != CL_SUCCESS) { std::cerr << "No OpenCL platform\n"; return 1; }
 	err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_DEFAULT, 1, &device, nullptr);
 	if (err != CL_SUCCESS) { std::cerr << "No OpenCL device\n"; return 1; }
@@ -121,15 +148,26 @@ int main() {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderClear(renderer);
 	SDL_Surface* surface = IMG_Load("./loading.png"); // Load the loading screen texture
+	SDL_Texture* texture = nullptr;
+	if (!surface) {
+		std::cerr << "Failed to load image './loading.png'! IMG_Error: " << IMG_GetError() << "\n";
+	} else {
+		texture = SDL_CreateTextureFromSurface(renderer, surface);
+		SDL_FreeSurface(surface);
+		if (!texture) {
+			std::cerr << "Failed to create texture from surface! SDL_Error: " << SDL_GetError() << "\n";
+		}
+	}
 
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-	SDL_FreeSurface(surface);
-
-	// Render the image
-	int width = 127*5;
-	int height = 19*5;
-	SDL_Rect dstRect = {(WIDTH/2) - (width/2), (HEIGHT/2) - (height/2), width, height};
-	SDL_RenderCopy(renderer, texture, nullptr, &dstRect);
+	// Render the image if texture is available
+	if (texture) {
+		constexpr int width = 127*5;
+		constexpr int height = 19*5;
+		const SDL_Rect dstRect = {(WIDTH/2) - (width/2), (HEIGHT/2) - (height/2), width, height};
+		if (SDL_RenderCopy(renderer, texture, nullptr, &dstRect) != 0) {
+			std::cerr << "SDL_RenderCopy failed: " << SDL_GetError() << "\n";
+		}
+	}
 
 	SDL_RenderPresent(renderer); // Present the screen
 
@@ -138,14 +176,14 @@ int main() {
 	SDL_Delay(50); // give the OS a chance to redraw
 
 	// Cleanup
-	SDL_DestroyTexture(texture);
+	if (texture) SDL_DestroyTexture(texture);
 
 	// ---------------------------
 
-	std::string kernelSrc = readFile("./gpu-code/particles.cl");
+	const std::string kernelSrc = readFile("./gpu-code/particles.cl");
 
 	const char* src = kernelSrc.c_str();
-	cl_program program = clCreateProgramWithSource(context, 1, &src, nullptr, &err);
+	const cl_program program = clCreateProgramWithSource(context, 1, &src, nullptr, &err);
 	if (clBuildProgram(program, 0, nullptr, nullptr, nullptr, nullptr) != CL_SUCCESS) {
 		size_t logSize;
 		clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, 0, nullptr, &logSize);
@@ -154,7 +192,7 @@ int main() {
 		std::cerr << "Build error:\n" << log.data() << "\n";
 		return 1;
 	}
-	cl_kernel kernel = clCreateKernel(program, "update_particles", &err);
+	const cl_kernel kernel = clCreateKernel(program, "update_particles", &err);
 
 	// ---------------------------
 	// 4. Main loop
@@ -171,7 +209,7 @@ int main() {
 		now = SDL_GetPerformanceCounter();
 		static Uint64 last = 0;
 
-		if (last != 0) dt = (float)(now - last) / SDL_GetPerformanceFrequency() / 6;
+		if (last != 0) dt = static_cast<float>(now - last) / SDL_GetPerformanceFrequency() / 6;
 
 
 		// Run kernel
@@ -195,12 +233,12 @@ int main() {
 		SDL_RenderClear(renderer);
 
 		// Have the loop start at a random item and iterate through the loop looping around to 0
-		int rand = xorshift32() % (N + 1);
+		const int rand = xorshift32() % (N + 1);
 		for (int l = rand; l < N + rand; l++) {
 			int i = (l + N) % N;
 
 			SDL_Color color;
-			switch ((int)species[i]) {
+			switch (species[i]) {
 				case 0: color =  {255,   0,   0, 255}; break; // red
 				case 1: color =  {255, 255,   0, 255}; break; // yellow
 				case 2: color =  {135, 206, 235, 255}; break; // sky blue
@@ -210,8 +248,8 @@ int main() {
 			}
 
 			SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-			int x = (int)particles[i].s[0];
-			int y = (int)particles[i].s[1];
+			int x = static_cast<int>(particles[i].s[0]);
+			int y = static_cast<int>(particles[i].s[1]);
 			SDL_RenderDrawCircle(renderer, x, y, 1);
 		}
 
@@ -224,6 +262,7 @@ int main() {
 	// ---------------------------
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+	IMG_Quit();
 	SDL_Quit();
 
 	clReleaseMemObject(bufParticles);
