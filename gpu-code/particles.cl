@@ -1,22 +1,74 @@
 // gpu-code/particles.cl
+//
+// CellularClusters - OpenCL update step for a simple particle life simulation.
+//
+// Overview
+// --------
+// This file contains a single kernel (update_particles) and a helper function
+// (computeParticle) that advance positions and velocities of N particles based on
+// pairwise attractions/repulsions between 5 species. Each particle is stored as
+// a float4 where:
+//   x, y = position in pixels (or world units mapped to screen pixels)
+//   z, w = velocity components (vx, vy)
+//
+// Data layout and arguments
+// -------------------------
+// - particles: __global float4[N] with elements {x, y, vx, vy}
+// - species:   __global int[N] species indices in [0,4]
+// - width, height: simulation bounds used for boundary collision/bounce
+// - dt: time step (seconds-like unit; forces are scaled by dt and an additional 15x factor)
+// - N: number of particles
+//
+// Tuning knobs
+// ------------
+// - attraction[][]: 5x5 matrix of signed interaction strengths (species-to-species)
+// - effectDist: interaction cutoff distance
+// - repulsion logic: short-range repulsion to avoid clustering artifacts
+// - margin: boundary margin where collisions/bounces occur
+// - maxVel: clamp for velocity magnitude per component
+//
+// Notes
+// -----
+// - The kernel launches half as many work-items as particles and processes two
+//   particles per work-item to increase arithmetic intensity for light loads.
+// - Forces are accumulated using a simple distance-normalized model with an
+//   early AABB distance test (fabs(dx), fabs(dy)) to skip far pairs cheaply.
+// - All math is single-precision to match OpenCL device defaults.
 
+// Species attraction/repulsion table (rows: self species, columns: other species).
+// Positive = attraction, Negative = repulsion. Effect table courtesy of Claude.
 __constant float attraction[5][5] = { // Effect table courtesy of Claude
- // | Red   | Yel    | Blu    | Grn  | Part |
-    {2.5f,   -2.5f,  2.789f,  0.3f,  0.1f   },   // Red attractions
-    {2.15f,  1.2f,   1.89f,   0.15f, 1.05f  }, // Yellow attractions  
-    {2.7f,   3.1f,  2.3f,    -0.3f, 2.4f   },   // Blue attractions
-    {3.05f,  -0.25f, 1.05f,   1.98f, -0.76f }, // Green attractions
-    {0.01f,  3.6f,   1.0f,    -1.6f, 1.7f   }   // Abiotic particle attractions
+// | Red   | Yel    | Blu    | Grn  | Part |
+   {2.5f,   -2.5f,  2.789f,  0.3f,  0.1f   },   // Red attractions
+   {2.15f,  1.2f,   1.89f,   0.15f, 1.05f  },  // Yellow attractions
+   {2.7f,   3.1f,  2.3f,    -0.3f, 2.4f   },   // Blue attractions
+   {3.05f,  -0.25f, 1.05f,   1.98f, -0.76f }, // Green attractions
+   {0.01f,  3.6f,   1.0f,    -1.6f, 1.7f   }   // Abiotic particle attractions
 };
 
-__constant float margin = 10.0f;
-__constant float maxVel = 1.0f;
+// Boundary handling parameters
+__constant float margin = 10.0f;  // Margin from each boundary where collisions are enforced
+__constant float maxVel = 1.0f;   // Per-axis velocity clamp
 
+// computeParticle
+// ---------------
+// Advance a single particle i by computing net force from all other particles,
+// then integrating velocity and position with simple damping and boundary bounce.
+//
+// Parameters:
+//   particles  - global buffer of float4 {x, y, vx, vy}
+//   species    - global buffer of species indices [0..4]
+//   i          - index of the particle to update
+//   effectDist - cutoff distance for interaction
+//   width      - domain width in pixels/units
+//   height     - domain height in pixels/units
+//   dt         - time step
+//   N          - total particle count
 void computeParticle(__global float4* particles,
-								__global int* species,
-								int i, float effectDist,
-								int width, int height,
-								float dt, int N) {
+						__global int* species,
+						int i, float effectDist,
+						int width, int height,
+						float dt, int N) {
 	float4 p = particles[i];
 	float fx = 0.0f;
 	float fy = 0.0f;
@@ -75,6 +127,21 @@ void computeParticle(__global float4* particles,
 	particles[i] = p;
 }
 
+// update_particles kernel
+// -----------------------
+// Entry point that updates all particles. Each work-item is responsible for up to
+// two particles to reduce launch overhead and improve cache locality:
+//   childWorkItem0 = gid * 2
+//   childWorkItem1 = gid * 2 + 1
+// If either index is >= N it is skipped.
+//
+// Parameters:
+//   particles - global buffer of float4 {x, y, vx, vy}
+//   species   - global buffer of species indices [0..4]
+//   width     - domain width
+//   height    - domain height
+//   dt        - time step
+//   N         - total particle count
 __kernel void update_particles(__global float4* particles,
 								__global int* species,
 								int width, int height,
