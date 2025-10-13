@@ -12,13 +12,22 @@
 #include <sstream>
 #include <stdexcept>
 
-int WIDTH  = 700;
+int WIDTH = 700;
 int HEIGHT = 400;
-constexpr int N = 8000;   // number of particles
+constexpr int N = 8000; // number of particles
 float dt = 0.0f;
 
-// Helper: read file into string
-std::string readFile(const std::string& filename) {
+// Pre-defined color lookup table
+static constexpr SDL_Color speciesColors[] = {
+	{255, 0, 0, 255}, // red
+	{255, 255, 0, 255}, // yellow
+	{135, 206, 235, 255}, // sky blue
+	{0, 128, 0, 255}, // green
+	{23, 100, 255, 255} // abiotic particles
+};
+
+// Helper: convert a file into string
+std::string readFile(const std::string &filename) {
 	std::ifstream file(filename);
 	if (!file.is_open()) throw std::runtime_error("Cannot open file: " + filename);
 	std::stringstream ss;
@@ -26,18 +35,7 @@ std::string readFile(const std::string& filename) {
 	return ss.str();
 }
 
-// Pseudo-random number
-static uint32_t xorshift_state = 123456789;
-
-inline uint32_t xorshift32() {
-	uint32_t x = xorshift_state;
-	x ^= x << 13;
-	x ^= x >> 17;
-	x ^= x << 5;
-	return xorshift_state = x;
-}
-
-void SDL_RenderDrawCircle(SDL_Renderer* renderer, const int32_t centerX, const int32_t centerY, const int32_t radius) {
+void SDL_RenderDrawCircle(SDL_Renderer *renderer, const int32_t centerX, const int32_t centerY, const int32_t radius) {
 	int32_t x = radius;
 	int32_t y = 0;
 	int32_t tx = 1;
@@ -65,11 +63,9 @@ void SDL_RenderDrawCircle(SDL_Renderer* renderer, const int32_t centerX, const i
 }
 
 int main() {
-
 	// use true randomness
 	std::random_device rd;
 	srand(rd());
-	xorshift_state = rd();
 
 	// ---------------------------
 	// 1. SDL2 setup
@@ -86,15 +82,18 @@ int main() {
 		return 1;
 	}
 
-	SDL_Window* window = SDL_CreateWindow("OpenCL Particles", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_ALLOW_HIGHDPI);
+	SDL_Window *window = SDL_CreateWindow("OpenCL Particles", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+	                                      WIDTH, HEIGHT,
+	                                      SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN |
+	                                      SDL_WINDOW_ALLOW_HIGHDPI);
 	if (!window) {
 		std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << "\n";
 		IMG_Quit();
 		SDL_Quit();
 		return 1;
 	}
-	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); // Do NOT add SDL_RENDERER_PRESENTVSYNC because it locks the simulation FPS!
+	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	// Do NOT add SDL_RENDERER_PRESENTVSYNC because it locks the simulation FPS!
 	if (!renderer) {
 		std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << "\n";
 		SDL_DestroyWindow(window);
@@ -115,13 +114,13 @@ int main() {
 	const int winH = y;
 
 	for (int i = 0; i < N; i++) {
-	    particles[i] = {
-		static_cast<float>(rand()) / RAND_MAX * static_cast<float>(winW),   // random float [0, WIDTH)
-		static_cast<float>(rand()) / RAND_MAX * static_cast<float>(winH),  // random float [0, HEIGHT)
-		0.0f,
-		0.0f
-	    };
-	    species[i] = rand() % 5;
+		particles[i] = {
+			static_cast<float>(rand()) / RAND_MAX * static_cast<float>(winW), // random float [0, WIDTH)
+			static_cast<float>(rand()) / RAND_MAX * static_cast<float>(winH), // random float [0, HEIGHT)
+			0.0f,
+			0.0f
+		};
+		species[i] = rand() % 5;
 	}
 
 	// ---------------------------
@@ -130,32 +129,50 @@ int main() {
 	cl_platform_id platform;
 	cl_device_id device;
 	cl_int err = clGetPlatformIDs(1, &platform, nullptr);
-	if (err != CL_SUCCESS) { std::cerr << "No OpenCL platform\n"; return 1; }
+	if (err != CL_SUCCESS) {
+		std::cerr << "No OpenCL platform\n";
+		return 1;
+	}
 
 	err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_DEFAULT, 1, &device, nullptr);
-	if (err != CL_SUCCESS) { std::cerr << "No OpenCL device\n"; return 1; }
+	if (err != CL_SUCCESS) {
+		std::cerr << "No OpenCL device\n";
+		return 1;
+	}
 
 	cl_context context = clCreateContext(nullptr, 1, &device, nullptr, nullptr, &err);
-	if (err != CL_SUCCESS) { std::cerr << "Failed to create OpenCL context\n"; return 1; }
+	if (err != CL_SUCCESS) {
+		std::cerr << "Failed to create OpenCL context\n";
+		return 1;
+	}
 
 	cl_command_queue queue = clCreateCommandQueueWithProperties(context, device, nullptr, &err);
-	if (err != CL_SUCCESS) { std::cerr << "Failed to create OpenCL command queue\n"; return 1; }
+	if (err != CL_SUCCESS) {
+		std::cerr << "Failed to create OpenCL command queue\n";
+		return 1;
+	}
 
 	cl_mem bufParticles = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
-		sizeof(cl_float4)*N, particles.data(), &err);
-	if (err != CL_SUCCESS) { std::cerr << "Failed to create OpenCL particles buffer\n"; return 1; }
+	                                     sizeof(cl_float4) * N, particles.data(), &err);
+	if (err != CL_SUCCESS) {
+		std::cerr << "Failed to create OpenCL particles buffer\n";
+		return 1;
+	}
 
 	cl_mem bufSpecies = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-		sizeof(int)*N, species.data(), &err);
-	if (err != CL_SUCCESS) { std::cerr << "Failed to create OpenCL species buffer\n"; return 1; }
+	                                   sizeof(int) * N, species.data(), &err);
+	if (err != CL_SUCCESS) {
+		std::cerr << "Failed to create OpenCL species buffer\n";
+		return 1;
+	}
 
 	// ---------------------------
 	// Render the compiling screen
 	// ---------------------------
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderClear(renderer);
-	SDL_Surface* surface = IMG_Load("./loading.png"); // Load the loading screen texture
-	SDL_Texture* texture = nullptr;
+	SDL_Surface *surface = IMG_Load("./loading.png"); // Load the loading screen texture
+	SDL_Texture *texture = nullptr;
 	if (!surface) {
 		std::cerr << "Failed to load image './loading.png'! IMG_Error: " << IMG_GetError() << "\n";
 	} else {
@@ -169,9 +186,9 @@ int main() {
 
 	// Render the image if texture is available
 	if (texture) {
-		constexpr int width = 127*5;
-		constexpr int height = 19*5;
-		const SDL_Rect dstRect = {(WIDTH/2) - (width/2), (HEIGHT/2) - (height/2), width, height};
+		constexpr int width = 127 * 5;
+		constexpr int height = 19 * 5;
+		const SDL_Rect dstRect = {(WIDTH / 2) - (width / 2), (HEIGHT / 2) - (height / 2), width, height};
 		if (SDL_RenderCopy(renderer, texture, nullptr, &dstRect) != 0) {
 			std::cerr << "SDL_RenderCopy failed: " << SDL_GetError() << "\n";
 		}
@@ -180,7 +197,8 @@ int main() {
 	SDL_RenderPresent(renderer); // Present the screen
 
 	SDL_Event event;
-	while (SDL_PollEvent(&event)) { } // process pending events
+	while (SDL_PollEvent(&event)) {
+	} // process pending events
 	SDL_Delay(50); // give the OS a chance to redraw
 
 	// Cleanup
@@ -189,9 +207,12 @@ int main() {
 	// ---------------------------
 
 	const std::string kernelSrc = readFile("./gpu-code/particles.cl");
-	const char* src = kernelSrc.c_str();
+	const char *src = kernelSrc.c_str();
 	const cl_program program = clCreateProgramWithSource(context, 1, &src, nullptr, &err);
-	if (err != CL_SUCCESS) { std::cerr << "Failed to create OpenCL program\n"; return 1; }
+	if (err != CL_SUCCESS) {
+		std::cerr << "Failed to create OpenCL program\n";
+		return 1;
+	}
 
 	if (clBuildProgram(program, 0, nullptr, nullptr, nullptr, nullptr) != CL_SUCCESS) {
 		size_t logSize;
@@ -202,7 +223,10 @@ int main() {
 		return 1;
 	}
 	const cl_kernel kernel = clCreateKernel(program, "update_particles", &err);
-	if (err != CL_SUCCESS) { std::cerr << "Failed to create OpenCL kernel\n"; return 1; }
+	if (err != CL_SUCCESS) {
+		std::cerr << "Failed to create OpenCL kernel\n";
+		return 1;
+	}
 
 	// ---------------------------
 	// 4. Main loop
@@ -237,31 +261,20 @@ int main() {
 
 		// Read results back
 		clEnqueueReadBuffer(queue, bufParticles, CL_TRUE, 0,
-			sizeof(cl_float4)*N, particles.data(), 0, nullptr, nullptr);
+		                    sizeof(cl_float4) * N, particles.data(), 0, nullptr, nullptr);
 
 		// Render
 		SDL_SetRenderDrawColor(renderer, 25, 25, 25, 255);
 		SDL_RenderClear(renderer);
 
-		// Have the loop start at a random item and iterate through the loop looping around to 0
-		const int rand = xorshift32() % (N + 1);
-		for (int l = rand; l < N + rand; l++) {
-			int i = (l + N) % N;
 
-			SDL_Color color;
-			switch (species[i]) {
-				case 0: color =  {255,   0,   0, 255}; break; // red
-				case 1: color =  {255, 255,   0, 255}; break; // yellow
-				case 2: color =  {135, 206, 235, 255}; break; // sky blue
-				case 3: color =  {  0, 128,   0, 255}; break; // green
-				case 4: color =  {23, 100, 255, 255};  break; // abiotic particles
-				default: color = {255, 255, 255, 255}; break;
-			}
+		for (int l = 0; l < N; l++) {
+			const auto &[r, g, b, a] = speciesColors[species[l]];
 
-			SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-			int x = static_cast<int>(particles[i].s[0]);
-			int y = static_cast<int>(particles[i].s[1]);
-			SDL_RenderDrawCircle(renderer, x, y, 1);
+			SDL_SetRenderDrawColor(renderer, r, g, b, a);
+			int _x = static_cast<int>(particles[l].s[0]);
+			int _y = static_cast<int>(particles[l].s[1]);
+			SDL_RenderDrawCircle(renderer, _x, _y, 1);
 		}
 
 		SDL_RenderPresent(renderer);
