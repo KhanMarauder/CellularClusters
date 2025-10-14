@@ -7,13 +7,14 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <vector>
+#include <string>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
 
 int WIDTH  = 700;
 int HEIGHT = 400;
-const int N = 8000;   // number of particles
+int N = 8000;   // number of particles
 float dt = 0.0f;
 
 // Helper: read file into string
@@ -63,12 +64,12 @@ void SDL_RenderDrawCircle(SDL_Renderer* renderer, int32_t centerX, int32_t cente
 	}
 }
 
-int main() {
+int main(int argc, char** argv) {
 	// ---------------------------
 	// 1. SDL2 setup
 	// ---------------------------
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << "\n";
+		std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
 		return 1;
 	}
 	SDL_Window* window = SDL_CreateWindow("OpenCL Particles", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -78,6 +79,11 @@ int main() {
 	// ---------------------------
 	// 2. Initialize particles
 	// ---------------------------
+	try {if (argc == 2) N = std::stoi(argv[1]);}
+	catch (const std::exception& e) {
+		std::cout << "Invalid integer in argument 0: " << e.what() << std::endl;
+	}
+
 	std::vector<cl_float4> particles(N);
 	std::vector<int> species(N);
 
@@ -210,9 +216,11 @@ int main() {
 			}
 
 			SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-			int x = (int)particles[i].s[0];
-			int y = (int)particles[i].s[1];
-			SDL_RenderDrawCircle(renderer, x, y, 1);
+			SDL_RenderDrawCircle(renderer,
+				(int)particles[i].s[0],
+				(int)particles[i].s[1],
+				1
+			);
 		}
 
 		SDL_RenderPresent(renderer);
