@@ -110,7 +110,9 @@ int main(int argc, char** argv) {
 	cl_device_id device;
 	err = clGetPlatformIDs(1, &platform, nullptr);
 	if (err != CL_SUCCESS) { std::cerr << "No OpenCL platform\n"; return 1; }
-	err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_DEFAULT, 1, &device, nullptr);
+	err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_ACCELERATOR, 1, &device, nullptr);
+	if (err != CL_SUCCESS) err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 1, &device, nullptr);
+	if (err != CL_SUCCESS) err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_CPU, 1, &device, nullptr);
 	if (err != CL_SUCCESS) { std::cerr << "No OpenCL device\n"; return 1; }
 
 	cl_context context = clCreateContext(nullptr, 1, &device, nullptr, nullptr, &err);
@@ -201,7 +203,7 @@ int main(int argc, char** argv) {
 		SDL_RenderClear(renderer);
 
 		// Have the loop start at a random item and iterate through the loop looping around to 0
-		int rand = xorshift32() % (N + 1);
+		int rand = 0;//xorshift32() % (N + 1);
 		for (int l = rand; l < N + rand; l++) {
 			int i = (l + N) % N;
 
