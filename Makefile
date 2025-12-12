@@ -29,3 +29,4 @@ installReqDeps:
 	@sudo apt update
 	@sudo apt install libsdl2-dev libsdl2-image-dev -y
 	@sudo apt install ocl-icd-opencl-dev opencl-headers
+	@echo "If you receive the error: 'No OpenCL platform.' then you will need to install the right OpenCL drivers for your hardware.\nIf you have an Intel HD like me, run \`sudo apt install intel-opencl-icd\`."
