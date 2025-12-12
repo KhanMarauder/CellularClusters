@@ -28,4 +28,4 @@ install:
 installReqDeps:
 	@sudo apt update
 	@sudo apt install libsdl2-dev libsdl2-image-dev -y
-	@sudo apt install libopencl-clang15
+	@sudo apt install ocl-icd-opencl-dev opencl-headers
