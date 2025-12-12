@@ -71,3 +71,9 @@ that contains the code that runs on the CPU/GPU in parallel.
 	<img width="80" height="auti" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/e8ea72b6-bd2c-4360-a48d-bbde70b28e3f" />
 	<figcaption><br>Oct 9, 2025 @ 9:28 AM - Another 'jellyfish' organism.</figcaption>
 </figure>
+
+***
+
+<figure>
+	<figcaption><br>Dec 11, 2025 @ 7:47 PM - Feel free to post videos & pictures in the comments!</figcaption>
+</figure>
