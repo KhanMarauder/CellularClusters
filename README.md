@@ -68,11 +68,20 @@ that contains the code that runs on the CPU/GPU in parallel.
 ***
 
 <figure>
-	<img width="80" height="auti" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/e8ea72b6-bd2c-4360-a48d-bbde70b28e3f" />
+	<img width="80" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/e8ea72b6-bd2c-4360-a48d-bbde70b28e3f" />
 	<figcaption><br>Oct 9, 2025 @ 9:28 AM - Another 'jellyfish' organism.</figcaption>
 </figure>
 
 ***
+
+<figure>
+	<img width="80" height="auto" alt="image" src="https://github.com/user-attachments/assets/8fe4d17c-fa32-4a40-858c-b2501645b68d" />
+	<figcation><br>Dec 12, 2025 @ 9:41 - Found yet another jellyfish. For clarification, a jellyfish isn't a rotifer. It looks like a rotifer, but it moves in the opposite way and has a shield of abiotic particles.</figcaption>
+</figure>
+
+***
+
+# ***Notices***
 
 <figure>
 	<figcaption><br>Dec 11, 2025 @ 7:47 PM - Feel free to post videos & pictures in the comments!</figcaption>
