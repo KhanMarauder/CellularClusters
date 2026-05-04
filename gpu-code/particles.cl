@@ -22,29 +22,37 @@ void computeParticle(__global float4* particles,
 	float fy = 0.0f;
 
 	int selfSpecies = species[i];
+	float4 other;
+	float dx, dy, dist, dist_recip, force, repulsion; // Only allocate once
+	int otherSpecies;
 
 	for (int j = 0; j < N; j++) {
 		if (i == j) continue;
 
-		float4 other = particles[j];
-		float dx = other.x - p.x;
-		float dy = other.y - p.y;
+		other = particles[j];
+		dx = other.x - p.x;
+		dy = other.y - p.y;
 		if (fabs(dx) > effectDist || fabs(dy) > effectDist) continue;
-		float dist = sqrt(dx*dx + dy*dy + 1e-5f);
+		dist = sqrt(dx*dx + dy*dy + 1e-5f);
 
-		int otherSpecies = species[j];
+		// Convert dist x and y to direction x and y
+		dist_recip = 1.0 / dist;
+		dx *= dist_recip;
+		dy *= dist_recip;
 
-		float force = attraction[selfSpecies][otherSpecies];
-		fx += (dx / dist) * force;
-		fy += (dy / dist) * force;
+		otherSpecies = species[j];
+
+		force = attraction[selfSpecies][otherSpecies];
+		fx += dx * force;
+		fy += dy * force;
 
 		// Distance optimization with help from Claude
-		float repulsion = 0.0f;
+		repulsion = 0.0f;
 		if (dist < 2.8f && otherSpecies != selfSpecies) repulsion = 6.5f;
 		else if (dist < 7.0f) repulsion = 2.5f;
 
-		fx -= (dx / dist) * repulsion;
-		fy -= (dy / dist) * repulsion;
+		fx -= dx * repulsion;
+		fy -= dy * repulsion;
 	}
 
 	// Update velocity
@@ -55,8 +63,8 @@ void computeParticle(__global float4* particles,
 	p.z *= 0.89;
 	p.w *= 0.89;
 
-	p.z = fmin(p.z, maxVel);
-	p.w = fmin(p.w, maxVel);
+	p.z = clamp(p.z, -maxVel, maxVel);
+	p.w = clamp(p.w, -maxVel, maxVel);
 
 	// Update position
 	p.x += p.z * 15.0f * dt;
