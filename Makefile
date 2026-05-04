@@ -25,8 +25,10 @@ install:
 	@echo "./run.elf" | sudo tee -a /usr/bin/cellularClusters.sh > /dev/null
 	@sudo chmod +x /usr/bin/cellularClusters.sh
 
-installReqDeps:
+install_dependancies:
 	@sudo apt update
 	@sudo apt install libsdl2-dev libsdl2-image-dev -y
 	@sudo apt install ocl-icd-opencl-dev opencl-headers
-	@echo "If you receive the error: 'No OpenCL platform.' then you will need to install the right OpenCL drivers for your hardware.\nIf you have an Intel HD like me, run \`sudo apt install pocl-opencl-icd opencl-headers ocl-icd-opencl-dev\`."
+	@echo
+	@echo "If you receive the error: 'No OpenCL platform.' then you will need to install the right OpenCL drivers for your hardware."
+	@echo "If you have an Intel HD like me, run \`sudo apt install pocl-opencl-icd opencl-headers ocl-icd-opencl-dev\`."
