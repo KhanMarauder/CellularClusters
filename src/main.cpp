@@ -17,6 +17,9 @@ int HEIGHT = 400;
 int N = 8000;   // number of particles
 float dt = 0.0f;
 
+
+
+
 // Helper: read file into string
 std::string readFile(const std::string& filename) {
 	std::ifstream file(filename);
@@ -25,6 +28,8 @@ std::string readFile(const std::string& filename) {
 	ss << file.rdbuf();
 	return ss.str();
 }
+
+
 
 // Psuedo-random number
 static uint32_t xorshift_state = 123456789;
@@ -37,32 +42,7 @@ inline uint32_t xorshift32() {
 	return xorshift_state = x;
 }
 
-void SDL_RenderDrawCircle(SDL_Renderer* renderer, int32_t centerX, int32_t centerY, int32_t radius) {
-	int32_t x = radius;
-	int32_t y = 0;
-	int32_t tx = 1;
-	int32_t ty = 1;
-	int32_t error = tx - (radius << 1);
 
-	while (x >= y) {
-		// Draw horizontal lines to fill the circle
-		SDL_RenderDrawLine(renderer, centerX - x, centerY - y, centerX + x, centerY - y);
-		SDL_RenderDrawLine(renderer, centerX - x, centerY + y, centerX + x, centerY + y);
-		SDL_RenderDrawLine(renderer, centerX - y, centerY - x, centerX + y, centerY - x);
-		SDL_RenderDrawLine(renderer, centerX - y, centerY + x, centerX + y, centerY + x);
-
-		if (error <= 0) {
-			++y;
-			error += ty;
-			ty += 2;
-		}
-		if (error > 0) {
-			--x;
-			tx += 2;
-			error += (tx - (radius << 1));
-		}
-	}
-}
 
 int main(int argc, char** argv) {
 	// ---------------------------
@@ -218,11 +198,7 @@ int main(int argc, char** argv) {
 			}
 
 			SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-			SDL_RenderDrawCircle(renderer,
-				(int)particles[i].s[0],
-				(int)particles[i].s[1],
-				1
-			);
+			SDL_RenderDrawPoint(renderer, (int)particles[i].s[0], (int)particles[i].s[1]);
 		}
 
 		SDL_RenderPresent(renderer);
