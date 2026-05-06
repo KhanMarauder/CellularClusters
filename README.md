@@ -17,15 +17,22 @@ that contains the code that runs on the CPU/GPU in parallel.
 # ***Screenshots***
 
 <figure>
-	<img width="1000" height="auto" alt="Screenshot 2025-09-28 5 45 18 PM" src="https://github.com/user-attachments/assets/592072fd-ddc2-4468-a06d-3806098d7828" />
+	<img width="1000" height="auto" alt="" src="https://github.com/user-attachments/assets/592072fd-ddc2-4468-a06d-3806098d7828" />
 	<figcaption><br>Sep 28, 2025 @ 5:28 PM - The tuned version of the simulation so far.</figcaption>
 </figure>
 
 ***
 
 <figure>
-	<img width="1000" height="auto" alt="image" src="https://github.com/user-attachments/assets/87fa4796-aead-443d-a5b4-813cee201998" />
+	<img width="1000" height="auto" alt="" src="https://github.com/user-attachments/assets/87fa4796-aead-443d-a5b4-813cee201998" />
 	<figcaption><br>Oct 9, 2025 @ 9:32 AM - After some more tuning, I have a more stable simulation.</figcaption>
+</figure>
+
+***
+
+<figure>
+	<img width="1000" height="auto" alt="image" src="https://github.com/user-attachments/assets/9d646ce1-bbd1-4295-b111-08f7231828fb" />
+	<figcaption><br>May 6, 2026 @ 9:51 - After more tuning, the simulation can handle 10,000 particles on the CPU</figcaption>
 </figure>
 
 ***
@@ -47,21 +54,21 @@ that contains the code that runs on the CPU/GPU in parallel.
 ***
 
 <figure>
-	<img width="123" height="auto" alt="A 'heliozoan' organism" src="https://github.com/user-attachments/assets/28c4a4a5-5124-47e1-a922-be33e1789ff8" />
-	<img width="183" height="auto" alt="A 'heliozoan' organism" src="https://github.com/user-attachments/assets/3e336799-d14f-44d2-9f29-396e7554356d" />
+	<img width="80" height="auto" alt="A 'heliozoan' organism" src="https://github.com/user-attachments/assets/28c4a4a5-5124-47e1-a922-be33e1789ff8" />
+	<img width="80" height="auto" alt="A 'heliozoan' organism" src="https://github.com/user-attachments/assets/3e336799-d14f-44d2-9f29-396e7554356d" />
 	<figcaption><br>Sep 28, 2025 @ 7:13 PM - Some 'helizoan' organism patterns.</figcaption>
 </figure>
 
 ***
 
 <figure>
-	<img width="100" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/cae97cd5-7d39-4781-b142-3ff1d8199a77" />
-	<img width="100" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/a43b42e2-cea9-4689-968b-4b6fb7a29346" />
-	<img width="90" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/52e635a7-7c0e-4da6-afba-953bb0fe5f1b" />
-	<img width="120" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/fffa4894-d55d-498f-9a51-15be611ea0c8" />
-	<img width="100" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/d782cd42-8b50-460a-a4da-ec49cf4914c1" />
-	<img width="100" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/2de1e6db-b3cd-46d4-845d-27017b2b3186" />
-	<img width="60" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/09eae9ff-7d8a-4406-b6dc-c23e65ff9186" />
+	<img width="80" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/cae97cd5-7d39-4781-b142-3ff1d8199a77" />
+	<img width="80" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/a43b42e2-cea9-4689-968b-4b6fb7a29346" />
+	<img width="80" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/52e635a7-7c0e-4da6-afba-953bb0fe5f1b" />
+	<img width="80" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/fffa4894-d55d-498f-9a51-15be611ea0c8" />
+	<img width="80" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/d782cd42-8b50-460a-a4da-ec49cf4914c1" />
+	<img width="80" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/2de1e6db-b3cd-46d4-845d-27017b2b3186" />
+	<img width="80" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/09eae9ff-7d8a-4406-b6dc-c23e65ff9186" />
 	<figcaption><br>Sep 30, 2025 @ 1:24 PM - Some 'jellyfish' organisms.</figcaption>
 </figure>
 
