@@ -14,7 +14,7 @@
 
 int WIDTH  = 700;
 int HEIGHT = 400;
-int N = 8000;   // number of particles
+int N = 10000;   // number of particles
 float dt = 0.0f;
 
 
