@@ -81,6 +81,22 @@ that contains the code that runs on the CPU/GPU in parallel.
 
 ***
 
+<figure>
+	<img width="80" height="auto" alt="Screenshot 2026-05-06 9 30 07 AM" src="https://github.com/user-attachments/assets/6f389a61-0bed-4503-9479-2f12ed22a2d3" />
+	<img width="80" height="auto" alt="Screenshot 2026-05-06 9 29 58 AM" src="https://github.com/user-attachments/assets/3e15dbe8-c924-4f2c-87b5-acd87b1083e6" />
+	<img width="80" height="auto" alt="Screenshot 2026-05-06 9 29 48 AM" src="https://github.com/user-attachments/assets/1d1cde3b-abc7-4300-a30d-65c48d8f43fd" />
+	<img width="80" height="auto" alt="Screenshot 2026-05-06 9 29 44 AM" src="https://github.com/user-attachments/assets/28a99c36-94dd-4a1b-ab1a-10d3d705952a" />
+	<figcaption><br>May 6, 2026 @ 9:35 - Found some new organisms! These organisms move sideways so I'm calling them, you guessed it, crabs!</figcaption>
+</figure>
+
+***
+<figure>
+	<img width="24" height="24" alt="Screenshot 2026-05-06 9 30 16 AM" src="https://github.com/user-attachments/assets/0d452520-ec26-48d0-af79-595039e59cc8" />
+	<figcaption><br>May 6, 2026 @ 9:38 - Found another jellyfish</figcaption>
+</figure>
+
+***
+
 # ***Notices***
 
 <figure>
