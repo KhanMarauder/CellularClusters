@@ -33,22 +33,22 @@ that contains the code that runs on the CPU/GPU in parallel.
 # ***Organsims***
 
 <figure>
-	<img width="130" height="auto" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/8823513e-226c-45de-ac0c-996e099e5bd4" />
-	<img width="150" height="auto" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/83e3f0d3-6e9d-4a68-9a7e-428618709a8c" />
+	<img width="80" height="auto" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/8823513e-226c-45de-ac0c-996e099e5bd4" />
+	<img width="80" height="auto" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/83e3f0d3-6e9d-4a68-9a7e-428618709a8c" />
 	<img width="80" height="auto" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/3a12dd4e-4c30-4f4d-a911-8845676cc582" />
-	<img width="240" height="auto" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/d1e96904-9dcc-41af-86b2-4d8f7cba6768" />
-	<img width="205" height="auto" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/49e31ad1-62e9-40ed-ad7a-ba5adeb7bf93" />
-	<img width="150" height="auto" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/cdb01788-ec61-499c-b4d8-f5701637580b" />
-	<img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/a955775c-aa62-454f-bc6b-f04f7b61795b" />
-	<img width="115" height="auto" alt="image" src="https://github.com/user-attachments/assets/06fc6b62-5353-44ca-a0d9-4c13a98bc1a8" />
+	<img width="80" height="auto" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/d1e96904-9dcc-41af-86b2-4d8f7cba6768" />
+	<img width="80" height="auto" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/49e31ad1-62e9-40ed-ad7a-ba5adeb7bf93" />
+	<img width="80" height="auto" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/cdb01788-ec61-499c-b4d8-f5701637580b" />
+	<img width="80" height="auto" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/a955775c-aa62-454f-bc6b-f04f7b61795b" />
+	<img width="80" height="auto" alt="A 'rotifer' organism" src="https://github.com/user-attachments/assets/06fc6b62-5353-44ca-a0d9-4c13a98bc1a8" />
 	<figcaption><br>Sep 28, 2025 @ 6-7 PM - Some 'rotifer' organism patterns.</figcaption>
 </figure>
 
 ***
 
 <figure>
-	<img width="123" height="auto" alt="image" src="https://github.com/user-attachments/assets/28c4a4a5-5124-47e1-a922-be33e1789ff8" />
-	<img width="183" height="auto" alt="image" src="https://github.com/user-attachments/assets/3e336799-d14f-44d2-9f29-396e7554356d" />
+	<img width="123" height="auto" alt="A 'heliozoan' organism" src="https://github.com/user-attachments/assets/28c4a4a5-5124-47e1-a922-be33e1789ff8" />
+	<img width="183" height="auto" alt="A 'heliozoan' organism" src="https://github.com/user-attachments/assets/3e336799-d14f-44d2-9f29-396e7554356d" />
 	<figcaption><br>Sep 28, 2025 @ 7:13 PM - Some 'helizoan' organism patterns.</figcaption>
 </figure>
 
@@ -75,23 +75,23 @@ that contains the code that runs on the CPU/GPU in parallel.
 ***
 
 <figure>
-	<img width="80" height="auto" alt="image" src="https://github.com/user-attachments/assets/8fe4d17c-fa32-4a40-858c-b2501645b68d" />
+	<img width="80" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/8fe4d17c-fa32-4a40-858c-b2501645b68d" />
 	<figcation><br>Dec 12, 2025 @ 9:41 - Found yet another jellyfish. For clarification, a jellyfish isn't a rotifer. It looks like a rotifer, but it moves in the opposite way and has a shield of abiotic particles.</figcaption>
 </figure>
 
 ***
 
 <figure>
-	<img width="80" height="auto" alt="Screenshot 2026-05-06 9 30 07 AM" src="https://github.com/user-attachments/assets/6f389a61-0bed-4503-9479-2f12ed22a2d3" />
-	<img width="80" height="auto" alt="Screenshot 2026-05-06 9 29 58 AM" src="https://github.com/user-attachments/assets/3e15dbe8-c924-4f2c-87b5-acd87b1083e6" />
-	<img width="80" height="auto" alt="Screenshot 2026-05-06 9 29 48 AM" src="https://github.com/user-attachments/assets/1d1cde3b-abc7-4300-a30d-65c48d8f43fd" />
-	<img width="80" height="auto" alt="Screenshot 2026-05-06 9 29 44 AM" src="https://github.com/user-attachments/assets/28a99c36-94dd-4a1b-ab1a-10d3d705952a" />
+	<img width="80" height="auto" alt="A 'crab' organism" src="https://github.com/user-attachments/assets/6f389a61-0bed-4503-9479-2f12ed22a2d3" />
+	<img width="80" height="auto" alt="A 'crab' organism" src="https://github.com/user-attachments/assets/3e15dbe8-c924-4f2c-87b5-acd87b1083e6" />
+	<img width="80" height="auto" alt="A 'crab' organism" src="https://github.com/user-attachments/assets/1d1cde3b-abc7-4300-a30d-65c48d8f43fd" />
+	<img width="80" height="auto" alt="A 'crab' organism" src="https://github.com/user-attachments/assets/28a99c36-94dd-4a1b-ab1a-10d3d705952a" />
 	<figcaption><br>May 6, 2026 @ 9:35 - Found some new organisms! These organisms move sideways so I'm calling them, you guessed it, crabs!</figcaption>
 </figure>
 
 ***
 <figure>
-	<img width="24" height="24" alt="Screenshot 2026-05-06 9 30 16 AM" src="https://github.com/user-attachments/assets/0d452520-ec26-48d0-af79-595039e59cc8" />
+	<img width="80" height="auto" alt="A 'jellyfish' organism" src="https://github.com/user-attachments/assets/0d452520-ec26-48d0-af79-595039e59cc8" />
 	<figcaption><br>May 6, 2026 @ 9:38 - Found another jellyfish</figcaption>
 </figure>
 
