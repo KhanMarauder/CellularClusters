@@ -102,34 +102,7 @@ int main(int argc, char** argv) {
 		sizeof(cl_float4)*N, particles.data(), &err);
 	cl_mem bufSpecies = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
 		sizeof(int)*N, species.data(), &err);
-
-	// ---------------------------
-	// Render the compiling screen
-	// ---------------------------
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	SDL_RenderClear(renderer);
-	SDL_Surface* surface = IMG_Load("./loading.png"); // Load the loading screen texture
-
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-	SDL_FreeSurface(surface);
-
-	// Render the image
-	int width = 127*5;
-	int height = 19*5;
-	SDL_Rect dstRect = {(WIDTH/2) - (width/2), (HEIGHT/2) - (height/2), width, height};
-	SDL_RenderCopy(renderer, texture, nullptr, &dstRect);
-
-	SDL_RenderPresent(renderer); // Present the screen
-
-	SDL_Event event;
-	while (SDL_PollEvent(&event)) { } // process pending events
-	SDL_Delay(50); // give the OS a chance to redraw
-
-	// Cleanup
-	SDL_DestroyTexture(texture);
-
-	// ---------------------------
-
+	
 	std::string kernelSrc = readFile("./gpu-code/particles.cl");
 
 	const char* src = kernelSrc.c_str();
